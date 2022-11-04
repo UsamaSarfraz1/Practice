@@ -41,5 +41,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_anchor="@+id/bottomAppbar"
-        app:layout_anchorGravity="center" />
+        app:layout_anchorGravity="center"
+        android:id="@+id/browsefiles"
+        />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
