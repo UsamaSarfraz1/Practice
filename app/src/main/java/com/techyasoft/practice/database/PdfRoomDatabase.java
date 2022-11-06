@@ -7,12 +7,13 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.techyasoft.practice.dao.PdfDao;
+import com.techyasoft.practice.entitiy.BookmarkTable;
 import com.techyasoft.practice.entitiy.RecentTable;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {RecentTable.class},version = 1, exportSchema = false)
+@Database(entities = {RecentTable.class, BookmarkTable.class},version = 1, exportSchema = false)
 public abstract class PdfRoomDatabase extends RoomDatabase {
     public abstract PdfDao pdfDao();
     private static volatile PdfRoomDatabase INSTANCE;

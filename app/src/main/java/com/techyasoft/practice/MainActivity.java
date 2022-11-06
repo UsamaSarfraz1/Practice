@@ -17,22 +17,49 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.techyasoft.practice.entitiy.BookmarkTable;
+import com.techyasoft.practice.entitiy.RecentTable;
+import com.techyasoft.practice.viewmodel.RecentViewModel;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private View mLayout;
     private static final int PERMISSION_REQUEST_READ = 0;
+    private RecentViewModel mRecentViewModel;
+    private final String TAG=MainActivity.class.getSimpleName();
+    List<RecentTable> recentlist=new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mLayout=findViewById(R.id.main_layout);
-        findViewById(R.id.button_open_camera).setOnClickListener(view -> readFiles());
+        findViewById(R.id.button_open_camera).setOnClickListener(view ->
+        {   mRecentViewModel.insertBookMArk(new BookmarkTable(recentlist.get(1).getId()));});
         findViewById(R.id.browsefiles).setOnClickListener(view -> readFiles());
-
+        mRecentViewModel=new ViewModelProvider(this).get(RecentViewModel.class);
+        mRecentViewModel.getRecentPdf().observe(this,recentPdf -> {
+            Log.i(TAG,""+recentPdf.size());
+            recentlist.addAll(recentPdf);
+        });
+        findViewById(R.id.bookmark).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this,BookMark.class));
+            }
+        });
+        findViewById(R.id.btnRecent).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mRecentViewModel.deleteRecent(recentlist.get(1).getId());
+                Log.i(TAG,""+recentlist.get(1).getId());
+            }
+        });
     }
 
     private void openPdfFile() {
@@ -49,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent=result.getData();
                     if(intent!=null){
                         Uri uri=intent.getData();
+                        mRecentViewModel.insertRecent(new RecentTable(uri.toString()));
                         startActivity(new Intent(MainActivity.this,PdfView.class)
                                         .putExtra("file",uri.toString()));
                         /*  PDFView pdfView=findViewById(R.id.pdfViewer);
@@ -124,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void readFiles(){
+
         if (ActivityCompat.checkSelfPermission(
                 this,Manifest.permission.READ_EXTERNAL_STORAGE)
         == PackageManager.PERMISSION_GRANTED){

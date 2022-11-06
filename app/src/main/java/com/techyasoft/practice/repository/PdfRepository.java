@@ -15,7 +15,7 @@ import java.util.List;
 public class PdfRepository {
     private PdfDao mPdfDao;
     private LiveData<List<RecentTable>> recentPdf;
-    private LiveData<List<RecentAndBookmark>> bookMarkPdf;
+    private LiveData<List<RecentTable>> bookMarkPdf;
 
     public PdfRepository(Application application){
         PdfRoomDatabase db=PdfRoomDatabase.getDatabase(application);
@@ -28,7 +28,7 @@ public class PdfRepository {
         return recentPdf;
     }
 
-    LiveData<List<RecentAndBookmark>> getBookMarkPdf(){
+    public  LiveData<List<RecentTable>> getBookMarkPdf(){
         return bookMarkPdf;
     }
     public void insertRecentPdf(RecentTable recent){
@@ -45,6 +45,15 @@ public class PdfRepository {
             @Override
             public void run() {
                 mPdfDao.insertBookMark(bookmark);
+            }
+        });
+    }
+
+    public void deleteRecent(int r_id){
+        PdfRoomDatabase.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                mPdfDao.deleteRecentPdf(r_id);
             }
         });
     }
